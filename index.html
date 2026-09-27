@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#08111f">
+  <meta name="description" content="知型四维性格偏好测试，提供 48、93、144、200 题四种版本与完整十六型人格报告。">
+  <title>知型 · 四维性格偏好测试</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --bg-deep: #050b14;
+      --surface: #111c2d;
+      --surface-raised: #19263a;
+      --surface-soft: #202f44;
+      --line: #314158;
+      --line-soft: rgba(151, 169, 194, .18);
+      --text: #f7f9fd;
+      --muted: #aab5c7;
+      --faint: #96a5ba;
+      --blue: #2f63d4;
+      --blue-bright: #5b8bff;
+      --green: #48d49e;
+      --amber: #e7b94d;
+      --rose: #ef8193;
+      --type-accent: #8176f2;
+      --shadow: 0 24px 64px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+      color: var(--text);
+      background:
+        radial-gradient(circle at 82% 18%, rgba(40, 132, 101, .20), transparent 30rem),
+        radial-gradient(circle at 24% 6%, rgba(61, 70, 151, .24), transparent 31rem),
+        var(--bg);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    ::selection { color: #fff; background: var(--blue); }
+    * { scrollbar-color: var(--blue) var(--bg-deep); }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible { outline: 3px solid rgba(91, 139, 255, .58); outline-offset: 3px; }
+    h1[tabindex="-1"]:focus { outline: none; }
+    button:disabled { cursor: default; }
+    [hidden] { display: none !important; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      min-height: 66px;
+      border-bottom: 1px solid rgba(151, 169, 194, .12);
+      background: rgba(5, 11, 20, .92);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-inner {
+      width: min(1240px, calc(100% - 40px));
+      min-height: 66px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--text); font-size: 1.08rem; font-weight: 760; text-decoration: none; letter-spacing: -.02em; }
+    .brand-mark { width: 34px; height: 34px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; padding: 7px; border: 1px solid #40516b; border-radius: 50%; background: #142033; }
+    .brand-mark i { border-radius: 50%; background: var(--blue-bright); }
+    .brand-mark i:nth-child(2) { background: var(--green); }
+    .brand-mark i:nth-child(3) { background: var(--amber); }
+    .brand-mark i:nth-child(4) { background: var(--rose); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .header-note { color: var(--muted); font-size: .86rem; }
+
+    .button-primary, .button-secondary, .button-ghost {
+      min-height: 46px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 720;
+      transition: transform .18s ease, background-color .18s ease, border-color .18s ease, color .18s ease;
+    }
+    .button-primary { padding: 11px 22px; color: #fff; background: var(--blue); box-shadow: 0 12px 28px rgba(0, 0, 0, .28); }
+    .button-primary:hover { transform: translateY(-2px); background: #2554b9; }
+    .button-secondary { padding: 10px 18px; color: #dce6ff; border: 1px solid #46618a; background: #1b2b43; }
+    .button-secondary:hover { border-color: var(--blue-bright); background: #223653; }
+    .button-ghost { padding: 9px 13px; color: var(--muted); background: transparent; }
+    .button-ghost:hover { color: #fff; background: rgba(255, 255, 255, .06); }
+
+    main { width: min(1240px, calc(100% - 40px)); margin: 0 auto; padding: 54px 0 86px; }
+    .screen { animation: screen-in .38s cubic-bezier(.2, .75, .2, 1) both; }
+    @keyframes screen-in { from { opacity: .72; filter: blur(5px); transform: translateY(8px); } }
+
+    .start-intro { max-width: 820px; margin-bottom: 36px; }
+    .start-intro h1 { max-width: 760px; margin: 0 0 16px; font-family: "DIN Alternate", "Arial Narrow", sans-serif; font-size: clamp(2.5rem, 6vw, 5.25rem); line-height: 1.02; letter-spacing: -.035em; }
+    .start-intro p { max-width: 720px; margin: 0; color: var(--muted); font-size: 1.08rem; }
+
+    .resume-card {
+      margin: 0 0 24px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border: 1px solid rgba(91, 139, 255, .46);
+      border-radius: 14px;
+      background: rgba(24, 39, 61, .88);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, .2);
+    }
+    .resume-card strong { display: block; }
+    .resume-card span { color: var(--muted); font-size: .88rem; }
+    .resume-actions { display: flex; flex-shrink: 0; gap: 8px; }
+
+    .version-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+    .version-card {
+      min-height: 430px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(32, 48, 70, .98), rgba(22, 34, 52, .98));
+      box-shadow: 0 18px 44px rgba(0, 0, 0, .18);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .version-card:hover { transform: translateY(-4px); border-color: #557092; box-shadow: var(--shadow); }
+    .version-card.recommended { border-color: var(--blue); box-shadow: 0 0 0 1px rgba(57, 116, 239, .22), 0 22px 54px rgba(0, 0, 0, .26); }
+    .version-tag { align-self: flex-start; padding: 5px 10px; color: #9db8ff; border-radius: 999px; background: #213863; font-size: .78rem; font-weight: 720; }
+    .version-card.recommended .version-tag { color: #ffc0cb; background: #563344; }
+    .version-card:last-child .version-tag { color: #82e6bd; background: #1d4a44; }
+    .version-card h2 { margin: 25px 0 12px; font-size: 1.55rem; line-height: 1.25; letter-spacing: -.02em; }
+    .version-time { margin: 0 0 21px; color: #8d9cb2; font-size: .9rem; }
+    .version-copy { margin: 0; color: var(--muted); font-size: .94rem; }
+    .version-points { margin: 24px 0; padding: 0; list-style: none; }
+    .version-points li { position: relative; padding-left: 17px; color: #aab6c8; font-size: .88rem; }
+    .version-points li + li { margin-top: 8px; }
+    .version-points li::before { content: ""; position: absolute; left: 0; top: .72em; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+    .version-card .button-primary { width: 100%; margin-top: auto; }
+
+    .test-guide { margin-top: 68px; padding-top: 28px; border-top: 1px solid var(--line-soft); }
+    .test-guide h2 { margin: 0 0 24px; font-size: 1.55rem; }
+    .guide-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .guide-grid article { padding-right: 24px; border-right: 1px solid var(--line-soft); }
+    .guide-grid article:last-child { border-right: 0; }
+    .guide-grid strong { display: block; margin-bottom: 7px; color: #fff; }
+    .guide-grid p { margin: 0; color: var(--muted); font-size: .91rem; }
+    .legal { max-width: 900px; margin: 30px 0 0; color: var(--faint); font-size: .8rem; }
+
+    .test-shell { max-width: 980px; margin: 0 auto; }
+    .progress-head { margin-bottom: 14px; display: flex; align-items: baseline; justify-content: space-between; gap: 18px; }
+    .progress-head strong { font-size: 1rem; }
+    .progress-head span { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .progress-track { height: 8px; overflow: hidden; border-radius: 999px; background: #1d2b3f; }
+    .progress-fill { width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--blue), var(--green)); transform: scaleX(0); transform-origin: left; transition: transform .26s ease-out; }
+    .question-card { min-height: 480px; margin-top: 28px; padding: clamp(30px, 6vw, 64px); display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(150deg, #1b2a40, #101b2c); box-shadow: var(--shadow); }
+    .question-meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; color: #8da1bd; font-size: .79rem; font-weight: 720; letter-spacing: .04em; }
+    .question-card h1 { max-width: 780px; margin: 15px 0 42px; font-size: clamp(1.65rem, 3.8vw, 2.6rem); line-height: 1.38; letter-spacing: -.025em; }
+    .scale-labels { margin-bottom: 10px; display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; }
+    .answer-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; }
+    .answer { min-height: 72px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #dce4f1; border: 1px solid #3a4b64; border-radius: 13px; background: #16243a; cursor: pointer; transition: .16s ease; }
+    .answer:hover, .answer.selected { color: #fff; border-color: var(--blue-bright); background: var(--blue); transform: translateY(-2px); }
+    .answer-key { color: #7f8da2; font-size: .72rem; }
+    .answer:hover .answer-key, .answer.selected .answer-key { color: rgba(255, 255, 255, .76); }
+    .test-actions { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .keyboard-tip { color: var(--faint); font-size: .78rem; }
+
+    .result-screen { --reader-width: 760px; }
+    .result-hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 430px;
+      padding: clamp(30px, 6vw, 72px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: center;
+      border: 1px solid var(--line-soft);
+      border-radius: 16px;
+      background:
+        linear-gradient(112deg, rgba(19, 29, 46, .98), rgba(7, 14, 25, .95)),
+        var(--bg-deep);
+      box-shadow: var(--shadow);
+    }
+    .result-ghost { position: absolute; right: 2%; top: 2%; color: rgba(255, 255, 255, .035); font-family: "DIN Alternate", "Arial Narrow", sans-serif; font-size: clamp(9rem, 25vw, 22rem); font-weight: 800; line-height: 1; letter-spacing: -.04em; pointer-events: none; }
+    .result-copy { position: relative; z-index: 1; max-width: 860px; }
+    .result-mode { display: inline-block; margin-bottom: 18px; padding: 5px 10px; color: var(--type-accent); border: 1px solid color-mix(in srgb, var(--type-accent) 55%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--type-accent) 12%, transparent); font-size: .78rem; font-weight: 740; }
+    .result-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 18px; }
+    .result-type { margin: 0; font-family: "DIN Alternate", "Arial Narrow", sans-serif; font-size: clamp(4.4rem, 11vw, 8rem); line-height: .88; letter-spacing: -.035em; }
+    .result-title { margin: 0; color: #d7deea; font-size: clamp(1.4rem, 3vw, 2rem); }
+    .result-subtitle { margin: 20px 0 0; color: var(--type-accent); font-size: .95rem; font-weight: 690; }
+    .result-summary { max-width: 800px; margin: 16px 0 0; color: #bdc7d6; font-size: 1rem; line-height: 1.86; }
+    .dimension-pills { position: relative; z-index: 1; margin-top: 34px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .dimension-pill { padding: 14px; display: grid; grid-template-columns: 22px 1fr 22px; align-items: center; gap: 8px; border-top: 1px solid rgba(255, 255, 255, .16); }
+    .dimension-pill span { grid-column: 1 / -1; color: #8190a6; font-size: .75rem; }
+    .dimension-pill b { font-family: "DIN Alternate", sans-serif; font-size: .95rem; text-align: center; }
+    .dimension-pill i { position: relative; height: 5px; border-radius: 999px; background: #314159; }
+    .dimension-pill i::after { content: ""; position: absolute; left: var(--position); top: 50%; width: 13px; height: 13px; border: 3px solid var(--bg); border-radius: 50%; background: var(--type-accent); transform: translate(-50%, -50%); }
+    .dimension-pill em { grid-column: 1 / -1; color: #aab6c8; font-size: .72rem; font-style: normal; }
+
+    .result-basis { margin: 18px 0 0; padding: 18px 22px; color: #aeb9ca; border: 1px solid var(--line-soft); border-radius: 14px; background: rgba(17, 28, 45, .78); font-size: .88rem; }
+    .axis-results { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .axis-card { padding: 22px; border: 1px solid var(--line-soft); border-radius: 14px; background: rgba(24, 38, 58, .9); }
+    .axis-card > div:first-child { display: flex; justify-content: space-between; gap: 18px; }
+    .axis-card > div:first-child span { color: var(--muted); font-size: .86rem; }
+    .axis-card > div:first-child strong { font-family: "DIN Alternate", sans-serif; }
+    .axis-labels { margin: 18px 0 8px; display: flex; justify-content: space-between; gap: 12px; color: #bbc5d4; font-size: .8rem; }
+    .axis-track { position: relative; height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--type-accent), #334258 50%, #536279); }
+    .axis-track i { position: absolute; top: 50%; width: 17px; height: 17px; border: 3px solid #101a2a; border-radius: 50%; background: #fff; transform: translate(-50%, -50%); }
+    .axis-card p { margin: 14px 0 2px; color: #dbe2ed; font-size: .88rem; }
+    .axis-card small { color: var(--faint); font-size: .75rem; }
+
+    .report-layout { margin-top: 42px; display: grid; grid-template-columns: 235px minmax(0, 1fr); align-items: start; gap: 32px; }
+    .report-aside { position: sticky; top: 94px; }
+    .report-aside h2 { margin: 0 0 7px; font-size: 1.14rem; }
+    .document-intro { margin: 0 0 18px; color: var(--faint); font-size: .78rem; line-height: 1.55; }
+    .report-nav { display: grid; gap: 2px; }
+    .report-nav button { width: 100%; padding: 8px 10px; color: #9eabbd; border: 0; border-radius: 8px; background: transparent; font-size: .84rem; text-align: left; cursor: pointer; }
+    .report-nav button:hover { color: #fff; background: rgba(255, 255, 255, .06); }
+    .report-aside .button-secondary { width: 100%; margin-top: 18px; }
+
+    .full-report { overflow: hidden; border: 1px solid var(--line-soft); border-radius: 16px; background: rgba(15, 25, 40, .93); box-shadow: 0 22px 60px rgba(0, 0, 0, .18); }
+    .doc-section { max-width: var(--reader-width); margin: 0 auto; padding: 46px 44px; }
+    .doc-section + .doc-section { border-top: 1px solid var(--line-soft); }
+    .doc-section h3 { margin: 0 0 22px; color: #fff; font-size: clamp(1.35rem, 2.6vw, 1.78rem); line-height: 1.34; letter-spacing: -.02em; }
+    .doc-section p { margin: 0; color: #bdc7d6; line-height: 1.92; }
+    .doc-section p + p { margin-top: 17px; }
+    .doc-type-title { margin: 0 0 10px; color: #fff; font-family: "DIN Alternate", "Arial Narrow", sans-serif; font-size: clamp(2rem, 4vw, 3.1rem); line-height: 1.12; }
+    .doc-subtitle { color: var(--type-accent) !important; font-weight: 720; }
+    .doc-function { margin-top: 8px !important; color: #8fa0b8 !important; font-size: .92rem; }
+    .doc-section ul, .doc-section ol { margin: 20px 0 0; padding-left: 1.4em; color: #c5cfdd; }
+    .doc-section li { padding-left: .35em; line-height: 1.8; }
+    .doc-section li + li { margin-top: 9px; }
+    .doc-section li::marker { color: var(--type-accent); font-weight: 760; }
+    .table-scroll { max-width: 100%; margin: 24px 0; overflow-x: auto; border: 1px solid #34465f; border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; min-width: 520px; }
+    th, td { padding: 15px 17px; text-align: left; vertical-align: middle; border-bottom: 1px solid #2e4058; }
+    tr:last-child th, tr:last-child td { border-bottom: 0; }
+    th { width: 30%; color: #fff; background: #20314a; font-size: .9rem; }
+    td { color: #c4cedc; background: #16243a; font-size: .9rem; }
+
+    .result-actions { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .result-legal { max-width: 900px; margin-top: 20px; color: var(--faint); font-size: .8rem; }
+    .toast { position: fixed; left: 50%; bottom: 24px; z-index: 30; padding: 10px 16px; color: #fff; border: 1px solid #496486; border-radius: 11px; background: #14243a; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transform: translate(-50%, 14px); transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    footer { width: min(1240px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 max(34px, env(safe-area-inset-bottom)); color: var(--faint); border-top: 1px solid var(--line-soft); font-size: .78rem; text-align: center; }
+
+    @media (max-width: 1050px) {
+      .version-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .version-card { min-height: 390px; }
+      .report-layout { grid-template-columns: 200px minmax(0, 1fr); gap: 22px; }
+      .doc-section { padding-inline: 34px; }
+    }
+
+    @media (max-width: 760px) {
+      .site-header, .header-inner { min-height: 58px; }
+      .header-inner { width: calc(100% - 24px); }
+      .brand { font-size: .98rem; }
+      .brand-mark { width: 30px; height: 30px; }
+      .header-note { display: none; }
+      .header-actions .button-primary { min-height: 40px; padding: 8px 13px; font-size: .86rem; }
+      main { width: calc(100% - 24px); padding: 30px 0 56px; }
+      .start-intro { margin-bottom: 26px; }
+      .start-intro h1 { font-size: clamp(2.45rem, 13vw, 4rem); }
+      .start-intro p { font-size: 1rem; }
+      .version-grid, .guide-grid, .axis-results, .dimension-pills { grid-template-columns: 1fr; }
+      .version-grid { gap: 12px; }
+      .version-card { min-height: 0; padding: 22px; }
+      .version-card h2 { margin-top: 18px; }
+      .version-points { margin: 18px 0; }
+      .guide-grid { gap: 20px; }
+      .guide-grid article { padding: 0 0 20px; border-right: 0; border-bottom: 1px solid var(--line-soft); }
+      .guide-grid article:last-child { border-bottom: 0; }
+      .resume-card { align-items: stretch; flex-direction: column; }
+      .resume-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .question-card { min-height: 0; margin-top: 18px; padding: 26px 16px 18px; }
+      .question-card h1 { margin: 12px 0 26px; font-size: clamp(1.42rem, 6.8vw, 1.9rem); line-height: 1.4; }
+      .scale-labels { display: none; }
+      .answer-grid { grid-template-columns: 1fr; gap: 8px; }
+      .answer { min-height: 52px; padding: 10px 15px; flex-direction: row; justify-content: space-between; }
+      .answer-key { display: none; }
+      .test-actions { position: sticky; bottom: 0; z-index: 5; margin: 12px -12px 0; padding: 12px 12px max(12px, env(safe-area-inset-bottom)); background: linear-gradient(180deg, transparent, var(--bg) 24%); }
+      .keyboard-tip { display: none; }
+      .result-hero { min-height: 0; padding: 30px 20px; }
+      .result-ghost { top: 7%; font-size: 8rem; }
+      .result-heading { display: block; }
+      .result-type { font-size: clamp(4.5rem, 24vw, 6rem); }
+      .result-title { margin-top: 10px; }
+      .result-summary { font-size: .94rem; }
+      .dimension-pills { gap: 0; margin-top: 26px; }
+      .dimension-pill { grid-template-columns: 24px minmax(0, 1fr) 24px; border-top: 1px solid rgba(255, 255, 255, .12); }
+      .dimension-pill span, .dimension-pill em { grid-column: 1 / -1; text-align: left; }
+      .axis-card { padding: 19px 17px; }
+      .report-layout { grid-template-columns: 1fr; margin-top: 30px; }
+      .report-aside { position: static; }
+      .report-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+      .report-nav button { padding: 8px; border: 1px solid var(--line-soft); }
+      .doc-section { padding: 32px 20px; }
+      .doc-section p { line-height: 1.86; }
+      .table-scroll { margin-inline: -4px; }
+      table { min-width: 100%; table-layout: fixed; }
+      th, td { padding: 12px 10px; overflow-wrap: anywhere; }
+      th { width: 34%; }
+      .result-actions { display: grid; grid-template-columns: 1fr; }
+      .result-actions button { width: 100%; }
+      footer { width: calc(100% - 24px); }
+    }
+
+    @media (max-width: 380px) {
+      .brand span:last-child { max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .header-actions .button-primary { padding-inline: 10px; }
+      .dimension-pill { grid-template-columns: 22px minmax(0, 1fr) 22px; }
+      .report-nav { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      :root { color-scheme: light; }
+      body { color: #111; background: #fff; }
+      .site-header, footer, .result-actions, .result-legal, .report-aside, .toast { display: none !important; }
+      main { width: 100%; padding: 0; }
+      .result-hero, .result-basis, .axis-card, .full-report { color: #111; border-color: #ddd; background: #fff; box-shadow: none; }
+      .result-ghost { display: none; }
+      .result-type, .result-title, .doc-section h3, .doc-type-title { color: #111; }
+      .result-summary, .result-basis, .axis-card p, .axis-card small, .doc-section p, .doc-section li, .doc-function { color: #333 !important; }
+      .doc-section { max-width: none; break-inside: auto; }
+      .doc-section h3, table { break-after: avoid; }
+      th, td { color: #111; border-color: #ccc; background: #fff; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    THESIS: 四种测试深度就是第一屏的产品，拒绝用营销型大横幅挡住实际入口。
+    OWN-WORLD: 深海军蓝整页底色、蓝色主行动、薄线深色面板、克制圆角与高密度长报告排版。
+    STORY: 选择题量，按真实状态作答，核对四维证据，再阅读 Word 文档对应的完整人格说明。
+    FIRST VIEWPORT: 顶部品牌导航，紧接标题与四张等权版本卡；桌面四列，手机单列，按钮始终在卡片底部。
+    FORM: 用户钉选的专业深色测评工作台，seed user-pinned-16personality-reference。
+    FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+  -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./" aria-label="返回知型测试首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>知型 TypeLens</span></a>
+      <div class="header-actions"><span class="header-note">无需注册 · 答案仅保存在当前设备</span><button id="header-home-btn" class="button-primary" type="button">选择版本</button></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="start-screen" class="screen" aria-labelledby="start-title">
+      <div class="start-intro">
+        <h1 id="start-title">选择你的测试版本</h1>
+        <p>四种题量使用同一套四维计分逻辑。时间越充足，覆盖的生活情境越多；认真按日常真实状态作答，比追求某个理想类型更重要。</p>
+      </div>
+
+      <div id="resume-card" class="resume-card" hidden>
+        <div><strong>上次测试还没有完成</strong><span id="resume-copy"></span></div>
+        <div class="resume-actions"><button id="discard-btn" class="button-ghost" type="button">重新开始</button><button id="resume-btn" class="button-secondary" type="button">继续作答</button></div>
+      </div>
+
+      <div class="version-grid" aria-label="选择测试题量">
+        <article class="version-card">
+          <span class="version-tag">速测体验</span>
+          <h2>48 题速测版</h2>
+          <p class="version-time">约 5 分钟</p>
+          <p class="version-copy">时间不多或第一次做测试，可先了解四个维度的大致方向。</p>
+          <ul class="version-points"><li>四字母类型快速生成</li><li>四维倾向与支持题数</li></ul>
+          <button class="button-primary" type="button" data-start-count="48">开始 48 题测试</button>
+        </article>
+        <article class="version-card">
+          <span class="version-tag">入门版</span>
+          <h2>93 题标准版</h2>
+          <p class="version-time">约 10 分钟</p>
+          <p class="version-copy">题量适中，通过更多正反向情境观察四个核心维度。</p>
+          <ul class="version-points"><li>核心维度稳定测量</li><li>完整人格内容报告</li></ul>
+          <button class="button-primary" type="button" data-start-count="93">开始 93 题测试</button>
+        </article>
+        <article class="version-card recommended">
+          <span class="version-tag">推荐选择</span>
+          <h2>144 题进阶版</h2>
+          <p class="version-time">约 15 分钟</p>
+          <p class="version-copy">覆盖工作、关系、学习和日常选择，适合认真了解自己的用户。</p>
+          <ul class="version-points"><li>更多生活场景交叉验证</li><li>维度证据与完整报告</li></ul>
+          <button class="button-primary" type="button" data-start-count="144">开始 144 题测试</button>
+        </article>
+        <article class="version-card">
+          <span class="version-tag">最全题库</span>
+          <h2>200 题深度版</h2>
+          <p class="version-time">约 20–25 分钟</p>
+          <p class="version-copy">使用全部原创等效题目，适合分辨较为接近的维度倾向。</p>
+          <ul class="version-points"><li>每个维度 50 道题</li><li>完整十六型人格解析</li></ul>
+          <button class="button-primary" type="button" data-start-count="200">开始 200 题测试</button>
+        </article>
+      </div>
+
+      <section class="test-guide" aria-labelledby="guide-title">
+        <h2 id="guide-title">怎样得到更有参考价值的结果</h2>
+        <div class="guide-grid">
+          <article><strong>按日常状态作答</strong><p>选择多数时候真实的你，而不是理想中的自己或角色期待。</p></article>
+          <article><strong>使用第一反应</strong><p>如果两边都像你，选择相对更自然、不需要刻意维持的一侧。</p></article>
+          <article><strong>重点看维度强弱</strong><p>接近 50% 的维度可能随情境切换，不要把四个字母当成能力标签。</p></article>
+        </div>
+      </section>
+      <p class="legal">本测试为原创自我探索工具，不是 Myers-Briggs Company 官方 MBTI® 测评，也不能替代心理、医学、招聘或职业诊断。</p>
+    </section>
+
+    <section id="test-screen" class="screen test-shell" hidden aria-labelledby="question-text">
+      <div class="progress-head"><strong id="phase-name">精力来源</strong><span id="progress-copy">1 / 144</span></div>
+      <div class="progress-track" role="progressbar" aria-label="测试进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill" class="progress-fill"></div></div>
+      <article class="question-card">
+        <div class="question-meta"><span id="question-count">第 01 题</span><span id="question-axis">精力来源 · E/I</span></div>
+        <h1 id="question-text" tabindex="-1" aria-live="polite" aria-atomic="true"></h1>
+        <div class="scale-labels" aria-hidden="true"><span>不符合我</span><span>符合我</span></div>
+        <div id="answer-grid" class="answer-grid" role="group" aria-label="请选择符合程度"></div>
+      </article>
+      <div class="test-actions"><button id="back-btn" class="button-ghost" type="button">← 上一题</button><span class="keyboard-tip">键盘按 1–5 可快速选择</span><button id="save-exit-btn" class="button-ghost" type="button">保存并退出</button></div>
+    </section>
+
+    <section id="result-screen" class="screen result-screen" hidden aria-labelledby="result-type">
+      <div class="result-hero">
+        <span id="result-ghost" class="result-ghost" aria-hidden="true"></span>
+        <div class="result-copy">
+          <span id="result-mode" class="result-mode"></span>
+          <div class="result-heading"><h1 id="result-type" class="result-type"></h1><h2 id="result-title" class="result-title"></h2></div>
+          <p id="result-subtitle" class="result-subtitle"></p>
+          <p id="result-summary" class="result-summary"></p>
+        </div>
+        <div id="dimension-pills" class="dimension-pills" aria-label="四维偏好概览"></div>
+      </div>
+
+      <p id="result-basis" class="result-basis"></p>
+      <div id="axis-results" class="axis-results"></div>
+
+      <div class="report-layout">
+        <aside class="report-aside" aria-label="完整报告目录">
+          <h2>完整人格报告</h2>
+          <p id="document-intro" class="document-intro"></p>
+          <nav id="report-nav" class="report-nav"></nav>
+          <button id="print-btn" class="button-secondary" type="button">打印或保存 PDF</button>
+        </aside>
+        <article id="full-report" class="full-report" aria-label="完整人格说明"></article>
+      </div>
+
+      <div class="result-actions"><button id="share-btn" class="button-primary" type="button">分享测试结果</button><button id="restart-btn" class="button-secondary" type="button">重新选择题量</button></div>
+      <p class="result-legal">结果描述的是当下偏好，不是能力、价值或命运的判定。涉及教育、职业、关系或心理健康的重要决定，请结合真实经历、他人反馈与专业意见。</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <footer>© 2026 知型 TypeLens · 原创四维偏好测试 · 非官方 MBTI® 测评</footer>
+  <script type="module" src="./mbti.js"></script>
+</body>
+</html>
